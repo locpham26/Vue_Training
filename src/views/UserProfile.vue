@@ -1,5 +1,6 @@
 <template>
   <v-container class="px-8">
+    <v-skeleton-loader type="article, card" v-if="loading"></v-skeleton-loader>
     <user-item
       class="my-4"
       :userName="user.username"
@@ -7,12 +8,13 @@
       :userId="user.id"
       :isEditing="isEditing"
       @openEditForm="isEditing = true"
+      v-if="!loading"
     ></user-item>
     <user-contact
-      :joinedDate="user.createdAt.slice(0, 10)"
+      :joinedDate="user.createdAt"
       :phoneNumber="user.phone"
       :userAddress="user.address"
-      v-if="!isEditing"
+      v-if="!isEditing && !loading"
     ></user-contact>
     <user-edit-form
       :userInfo="{ ...user }"
@@ -39,30 +41,28 @@ export default {
   },
   data() {
     return {
-      user: {
-        id: "",
-        username: "",
-        email: "",
-        phone: "",
-        address: "",
-        avatar: "",
-        createdAt: "",
-      },
+      user: {},
       isEditing: false,
+      loading: false,
     };
   },
   methods: {
     async fetchUser(userId) {
+      this.loading = true;
       const { data } = await UserRepo.getUser(userId);
       this.user = { ...data };
+      this.loading = false;
     },
     submit() {
       this.isEditing = false;
       this.fetchUser(this.$route.params.id);
     },
   },
-  mounted() {
-    this.fetchUser(this.$route.params.id);
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.fetchUser(vm.$route.params.id);
+      next();
+    });
   },
 };
 </script>

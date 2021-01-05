@@ -69,7 +69,7 @@ export default {
   },
   computed: {
     alternativeAvatar() {
-      if (this.userName !== "") {
+      if (this.userName) {
         const firstName = this.userName.split(" ")[0];
         const lastName = this.userName.split(" ")[1];
         return firstName[0] + lastName[0];

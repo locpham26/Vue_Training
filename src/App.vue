@@ -3,7 +3,9 @@
     <the-header></the-header>
     <the-side-bar></the-side-bar>
     <v-main>
-      <router-view></router-view>
+      <keep-alive>
+        <router-view :key="$route.fullPath"></router-view>
+      </keep-alive>
     </v-main>
   </v-app>
 </template>
